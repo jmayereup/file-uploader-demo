@@ -1,0 +1,32 @@
+<div class="inline-flex flex-row m-2 w-60 self-center">
+
+</div>
+
+
+<section class="text-gray-600 body-font ">
+  <div class="w-3/4 mx-auto px-8 py-6 border-2 border-gray-200 border-opacity-60">
+    <h2 class="text-lg sm:text-xl text-gray-900 font-medium title-font mb-2">
+      File Uploader for Reading Tool</h2>
+    <form [formGroup]="form" (ngSubmit)="onSubmit()" class="flex flex-col">
+      <div class="m-1">
+        <label for="file">
+          <span class="my-button mr-1 w-40">Choose a File</span>
+          <input type="file" id="file" formControlName="file" (change)="onFileSelected($event)" class="file:hidden">
+        </label>
+        <ng-container *ngIf="errorMessage"><span class="text-red-500">
+            <br>
+            {{errorMessage.error.message}}
+            <button type="button" class="border border-solid border-red-500 px-1"
+            (click)="clearMessages()">X</button>
+          </span>
+        </ng-container>
+      </div>
+      <div class="flex-row">
+        <button type="submit" class="my-button m-1 mt-2 w-40">
+          Submit
+        </button>
+        <div *ngIf="successMessage" class="inline-flex">{{successMessage}} 👍</div>
+      </div>
+    </form>
+  </div>
+</section>

@@ -1,1 +1,15 @@
 /* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    --primary: darkgreen;
+    --button-default: rgb(188, 223, 188);
+}
+
+
+.my-button {
+    @apply inline-flex justify-center text-black border-0 py-2 px-4 focus:outline-none hover:bg-green-800 hover:text-white rounded;
+    background-color: var(--button-default);
+}
