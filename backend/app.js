@@ -44,7 +44,7 @@ app.post('/upload', (req, res) => {
 
 
 app.get('/hello', (req, res) => {
-    res.send('Hello World!');
+    res.send('Hello World from File Uploader!');
 });
 
 app.listen(3001, () => {
