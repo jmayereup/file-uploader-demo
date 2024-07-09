@@ -6,7 +6,7 @@ const app = express();
 const PORT = 3001
 let filename = "unchanged";
 
-const allowedOrigins = ['http://localhost:4200', 'https://read.teacherjake.com', 'https://app.teacherjake.com'];
+const allowedOrigins = ['http://localhost:4200', 'https://read.teacherjake.com', 'https://app.teacherjake.com', 'https://purplepeoplesreader.com'];
 
 
 const storage = multer.diskStorage({
