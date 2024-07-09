@@ -52,7 +52,7 @@ app.post('/upload', (req, res) => {
         if (!req.file) {
             return res.status(400).json({ message: 'Did you forget to attach a file?' });
         }
-        res.send({ message: `File Uploaded to`, path: `https://blog.teacherjake.com/apps/assets/${filename}` });
+        res.send({ message: `File Uploaded to`, path: `apps/assets/${filename}` });
     })
 });
 
