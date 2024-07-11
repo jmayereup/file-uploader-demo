@@ -3,7 +3,6 @@ const multer = require('multer');
 const cors = require('cors');
 const sharp = require('sharp');
 const path = require('path');
-const fs = require('fs');
 
 
 const app = express();
@@ -57,14 +56,17 @@ app.post('/upload', (req, res) => {
             return res.status(400).json({ message: 'Did you forget to attach a file?' });
         }
 
-        const { originalname, buffer } = req.file;
-        const filename = path.parse(originalname).name;
-        const thumbnailFilename = `${filename}_thumbnail.png`;
+        const { originalname, path: filePath } = req.file;
+        const thumbnailFilename = `${path.parse(originalname).name}_thumbnail.png`;
+        const thumbnailPath = path.join('/var/www/apps/assets/thumbnails', thumbnailFilename);
+
+
+        console.log('File Uploaded - ', filename);
 
         try {
-            await sharp(buffer)
-                .resize(null, 64) // Resize to desired thumbnail size
-                .toFile(path.join(__dirname, 'thumbnails', thumbnailFilename));
+            await sharp(filePath)
+                .resize(null, 64)
+                .toFile(thumbnailPath);
 
             res.send({ message: 'File uploaded and thumbnail generated', filename: thumbnailFilename });
         } catch (err) {
@@ -72,8 +74,6 @@ app.post('/upload', (req, res) => {
         }
     });
 });
-
-fs.mkdirSync(path.join(__dirname, 'thumbnails'), { recursive: true });
 
 app.listen(3001, () => {
     console.log(`Server listening on port ${PORT}`);
