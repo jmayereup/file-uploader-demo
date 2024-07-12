@@ -50,25 +50,28 @@ app.use(cors({
 app.post('/upload', (req, res) => {
     upload(req, res, async function (err) {
         if (err) {
-            return res.status(400).json({ message: err.message, path: 'failed' })
+            return res.status(400).send({ message: err.message, path: 'failed' })
         }
         if (!req.file) {
-            return res.status(400).json({ message: 'Did you forget to attach a file?' });
+            return res.status(400).send({ message: 'Did you forget to attach a file?' });
         }
 
-        const { originalname, path: filePath } = req.file;
+        
+        const { originalname, mimetype, path: filePath } = req.file;
         const thumbnailFilename = `${path.parse(originalname).name}_thumbnail.png`;
         const thumbnailPath = path.join('/var/www/apps/assets/thumbnails', thumbnailFilename);
-
-
-        console.log('File Uploaded - ', filename);
+        
+        
+        if (mimetype === 'audio/mpeg') {
+            return res.status(200).send({ message: 'Audio File uploaded', filename: originalname });
+        }
 
         try {
             await sharp(filePath)
                 .resize(null, 64)
                 .toFile(thumbnailPath);
 
-            res.send({ message: 'File uploaded and thumbnail generated', filename: thumbnailFilename });
+            res.status(200).send({ message: 'File uploaded and thumbnail generated', filename: thumbnailFilename });
         } catch (err) {
             res.status(500).send({ message: 'Error processing image' });
         }

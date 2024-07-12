@@ -45,7 +45,7 @@ export class FileUploaderComponent {
           this.form.reset();
           this.successMessage = "File Upload Successful";
         },
-        error: (error) => {
+        error: (error: Promise<Error>) => {
           console.error('Error Uploading File', error);
           this.errorMessage = error;
         }
