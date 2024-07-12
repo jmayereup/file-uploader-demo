@@ -63,7 +63,7 @@ app.post('/upload', (req, res) => {
         
         
         if (mimetype === 'audio/mpeg') {
-            return res.status(200).send({ message: 'Audio File uploaded', filename: originalname });
+            return res.status(200).send({ message: 'Audio File uploaded', path: filePath });
         }
 
         try {
@@ -71,7 +71,7 @@ app.post('/upload', (req, res) => {
                 .resize(null, 64)
                 .toFile(thumbnailPath);
 
-            res.status(200).send({ message: 'File uploaded and thumbnail generated', filename: thumbnailFilename });
+            res.status(200).send({ message: 'File uploaded and thumbnail generated', path: filePath });
         } catch (err) {
             res.status(500).send({ message: 'Error processing image' });
         }
