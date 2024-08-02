@@ -68,7 +68,7 @@ app.post('/upload', (req, res) => {
 
         try {
             await sharp(filePath)
-                .resize(null, 64)
+                .resize(96, 96)
                 .toFile(thumbnailPath);
 
             res.status(200).send({ message: 'File uploaded and thumbnail generated', path: filename });
