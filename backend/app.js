@@ -67,7 +67,7 @@ app.post('/upload', (req, res) => {
                 .audioCodec('libmp3lame')
                 .on('end', () => {
                     console.log(`File converted to 48kbps and saved to: ${tempPath}`);
-                    
+
                     // Move the compressed file back to the original file path
                     fs.rename(tempPath, filePath, (err) => {
                         if (err) {
@@ -109,7 +109,8 @@ app.post('/upload', (req, res) => {
 
                     // Generate a thumbnail
                     await sharp(filePath)
-                        .resize(null, 64)
+                        .extract({ width: size, height: size, left: (metadata.width - size) / 2, top: (metadata.height - size) / 2 })
+                        .resize(96, 96)
                         .toFile(thumbnailPath);
 
                     res.status(200).send({ message: 'File uploaded, compressed, and thumbnail generated', path: filePath });
@@ -122,10 +123,10 @@ app.post('/upload', (req, res) => {
             const thumbnailFilename = `${path.parse(originalname).name}_thumbnail.png`;
             const thumbnailPath = path.join('/var/www/apps/assets/thumbnails', thumbnailFilename);
 
-        try {
-            await sharp(filePath)
-                .resize(96, 96)
-                .toFile(thumbnailPath);
+            try {
+                await sharp(filePath)
+                    .resize(96, 96)
+                    .toFile(thumbnailPath);
 
                 res.status(200).send({ message: 'File uploaded and thumbnail generated', path: filename });
             } catch (err) {
