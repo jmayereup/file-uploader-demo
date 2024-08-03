@@ -76,7 +76,7 @@ app.post('/upload', (req, res) => {
                         }
 
                         console.log(`Compressed file moved back to original path: ${filePath}`);
-                        return res.status(200).send({ message: 'Audio File uploaded and converted to 48kbps', path: filePath });
+                        return res.status(200).send({ message: 'Audio File uploaded and converted to 48kbps', path: filename });
                     });
                 })
                 .on('error', (err) => {
@@ -115,7 +115,7 @@ app.post('/upload', (req, res) => {
                         .resize(96, 96)
                         .toFile(thumbnailPath);
 
-                    res.status(200).send({ message: 'File uploaded, compressed, and thumbnail generated', path: filePath });
+                    res.status(200).send({ message: 'File uploaded, compressed, and thumbnail generated', path: filename });
                 });
             } catch (err) {
                 res.status(500).send({ message: 'Error processing image', error: err });
