@@ -10,6 +10,7 @@ const fs = require('fs');
 const app = express();
 const PORT = 3001;
 let filename = "unchanged";
+const baseUrl = 'https://purplepeoplesreader.com/apps/assets/';
 
 const allowedOrigins = ['http://localhost:4200', 'https://read.teacherjake.com', 'https://app.teacherjake.com', 'https://purplepeoplesreader.com'];
 
@@ -30,6 +31,7 @@ const upload = multer({
             return cb(new Error('File must be a .png, .jpg, .jpeg, .webp, or .mp3'), false);
         }
         filename = file.originalname;
+        console.log('submitted:', filename);
         cb(null, true);
     }
 }).single('file');
@@ -76,7 +78,7 @@ app.post('/upload', (req, res) => {
                         }
 
                         console.log(`Compressed file moved back to original path: ${filePath}`);
-                        return res.status(200).send({ message: 'Audio File uploaded and converted to 48kbps', path: filePath });
+                        return res.status(200).send({ message: 'Audio File uploaded and converted to 48kbps', path: filename });
                     });
                 })
                 .on('error', (err) => {
@@ -91,13 +93,17 @@ app.post('/upload', (req, res) => {
             const compressedPath = `/var/www/apps/assets/temp_${originalname}`;
             const thumbnailFilename = `${path.parse(originalname).name}_thumbnail.png`;
             const thumbnailPath = path.join('/var/www/apps/assets/thumbnails', thumbnailFilename);
-            
+
             try {
                 // Compress the WebP image
                 await sharp(filePath)
                     .webp({ quality: 50 })
                     .toFile(compressedPath);
 
+                // Generate a thumbnail
+                await sharp(filePath)
+                    .resize(null, 64)
+                    .toFile(thumbnailPath);
                 // Move the compressed file back to the original file path
                 fs.rename(compressedPath, filePath, async (err) => {
                     if (err) {
@@ -107,18 +113,11 @@ app.post('/upload', (req, res) => {
 
                     console.log(`Compressed file moved back to original path: ${filePath}`);
 
-                    // Generate a thumbnail
-                    const metadata = await sharp(filePath).metadata();
-                    const size = Math.min(metadata.width, metadata.height);
-                    await sharp(filePath)
-                        .extract({ width: size, height: size, left: (metadata.width - size) / 2, top: (metadata.height - size) / 2 })
-                        .resize(96, 96)
-                        .toFile(thumbnailPath);
 
-                    res.status(200).send({ message: 'File uploaded, compressed, and thumbnail generated', path: filePath });
+                    return res.status(200).send({ message: 'File uploaded, compressed, and thumbnail generated', path: filename});
                 });
             } catch (err) {
-                res.status(500).send({ message: 'Error processing image', error: err });
+                return res.status(500).send({ message: 'Error processing image' });
             }
         }
         else {
@@ -127,7 +126,7 @@ app.post('/upload', (req, res) => {
 
             try {
                 await sharp(filePath)
-                    .resize(96, 96)
+                    .resize(null, 64)
                     .toFile(thumbnailPath);
 
                 res.status(200).send({ message: 'File uploaded and thumbnail generated', path: filename });
